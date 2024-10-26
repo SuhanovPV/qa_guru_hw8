@@ -15,21 +15,19 @@ class Product:
 
     def check_quantity(self, quantity) -> bool:
         """
-        TODO Верните True если количество продукта больше или равно запрашиваемому
-            и False в обратном случае
+        Верните True если количество продукта больше или равно запрашиваемому и False в обратном случае
         """
         return self.quantity >= quantity
 
     def buy(self, quantity):
         """
-        TODO реализуйте метод покупки
             Проверьте количество продукта используя метод check_quantity
             Если продуктов не хватает, то выбросите исключение ValueError
         """
         if self.check_quantity(quantity):
             self.quantity -= quantity
         else:
-            raise ValueError ("Product quantity less then required")
+            raise ValueError("Product quantity less then required")
 
     def __hash__(self):
         return hash(self.name + self.description)
@@ -38,7 +36,6 @@ class Product:
 class Cart:
     """
     Класс корзины. В нем хранятся продукты, которые пользователь хочет купить.
-    TODO реализуйте все методы класса
     """
 
     # Словарь продуктов и их количество в корзине
@@ -65,7 +62,7 @@ class Cart:
         Если remove_count больше, чем количество продуктов в позиции, то удаляется вся позиция
         """
         if product not in self.products:
-            raise ValueError
+            raise ValueError("There is no product in the cart")
 
         if remove_count is None or self.products[product] <= remove_count:
             del self.products[product]
@@ -89,7 +86,9 @@ class Cart:
         """
         for product, quantity in self.products.items():
             if product.quantity < quantity:
-                raise ValueError("Product quantity on stock less then required")
+                raise ValueError("There is shortage of product on stock")
+            product.buy(quantity)
+        self.clear()
 
 
 if __name__ == "__main__":
