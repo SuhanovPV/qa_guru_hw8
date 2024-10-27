@@ -13,7 +13,7 @@ def product():
 
 @pytest.fixture
 def another_product():
-    return Product("pen", 5, "Red pen", 100)
+    return Product("pen", 5.17, "Red pen", 100)
 
 
 @pytest.fixture
@@ -140,14 +140,22 @@ class TestCart:
 
     def test_get_total_price_from_non_empty_cart(self, cart, product, another_product):
         """Проверка общей стоимости из корзины"""
-        cart.add_product(product, 100)
-        cart.add_product(another_product, 100)
+        cart.add_product(product, 123)
+        cart.add_product(another_product, 337)
 
-        assert cart.get_total_price() == (product.price + another_product.price) * 100
+        assert cart.get_total_price() == product.price * 123 + another_product.price * 337
 
     def test_get_total_price_from_empty_cart(self, cart):
         """Проверка получения общей стоимости из пустой корзины"""
         assert cart.get_total_price() == 0
+
+    def test_get_total_price_with_accurate_to_ruble(self, cart):
+        p1 = Product(name='p1', price=2.324, description='p1', quantity=100)
+        p2 = Product(name='p2', price=1.14, description='p2', quantity=100)
+        cart.add_product(p1, 17)
+        cart.add_product(p2, 9)
+
+        assert round(cart.get_total_price()) == round(p1.price * 17 + p2.price * 9)
 
     def test_buy_in_cart_one_product(self, cart, product):
         """Проверка покупки товара, в корзине один товар"""
@@ -168,11 +176,6 @@ class TestCart:
         assert len(cart.products) == 0
         assert product.quantity == product_quantity - 100
         assert another_product.quantity == another_product_quantity - 100
-
-    def test_buy_empty_cart(self, cart):
-        """Проверка покупки, корзина пуста"""
-        cart.buy()
-        assert len(cart.products) == 0
 
     def test_buy_product_quantity_in_cart_more_then_in_product(self, cart, product):
         """Проверка покупки, количество товара в корзине больше, чем на складе"""

@@ -62,7 +62,7 @@ class Cart:
         Если remove_count больше, чем количество продуктов в позиции, то удаляется вся позиция
         """
         if product not in self.products:
-            raise ValueError("There is no product in the cart")
+            raise ValueError("No such product in the cart")
 
         if remove_count is None or self.products[product] <= remove_count:
             del self.products[product]
@@ -84,20 +84,12 @@ class Cart:
         Учтите, что товаров может не хватать на складе.
         В этом случае нужно выбросить исключение ValueError
         """
+
         for product, quantity in self.products.items():
-            if product.quantity < quantity:
+            if not product.check_quantity(quantity):
                 raise ValueError("There is shortage of product on stock")
+
+        for product, quantity in self.products.items():
             product.buy(quantity)
+
         self.clear()
-
-
-if __name__ == "__main__":
-    pr = Product(name='pen', price=15, description='black pen', quantity=5)
-    pr1 = Product(name='pen', price=20, description='black pen', quantity=24)
-    cart = Cart()
-    cart.add_product(pr)
-    cart.add_product(pr1)
-    cart.add_product(pr1, 15)
-    print(cart)
-    cart.remove_product(pr1, 1)
-    cart.buy()
